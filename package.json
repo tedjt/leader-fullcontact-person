@@ -1,9 +1,9 @@
 {
-  "name": "leader-fullcontact-name",
+  "name": "leader-fullcontact-person",
   "version": "1.0.0",
-  "repository": "git://github.com/tedjt/leader-fullcontact-name.git",
+  "repository": "git://github.com/tedjt/leader-fullcontact-person.git",
   "license": "MIT",
-  "description": "A Fullcontact API plugin for leader to extract names from email addresses",
+  "description": "A Fullcontact API plugin for leader to extract person information with fullcontact's person api",
   "keywords": [
     "leader",
     "Fullcontact",
