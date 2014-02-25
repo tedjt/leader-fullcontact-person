@@ -1,0 +1,24 @@
+{
+  "name": "leader-fullcontact-name",
+  "version": "1.0.0",
+  "repository": "git://github.com/tedjt/leader-fullcontact-name.git",
+  "license": "MIT",
+  "description": "A Fullcontact API plugin for leader to extract names from email addresses",
+  "keywords": [
+    "leader",
+    "Fullcontact",
+    "person",
+    "middleware"
+  ],
+  "dependencies": {
+    "debug": "~0.7.4",
+    "extend": "~1.2.1",
+    "obj-case": "git://github.com/tedjt/obj-case",
+    "flatnest": "git://github.com/tedjt/node-flatnest",
+    "fullcontact": "0.0.2"
+  },
+  "devDependencies": {
+    "mocha": "~1.15.1",
+    "should": "~3.1.2"
+  }
+}
