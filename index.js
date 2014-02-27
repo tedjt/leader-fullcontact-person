@@ -2,6 +2,7 @@ var debug = require('debug')('leader:fullcontact:name');
 var extend = require('extend');
 var objCase = require('obj-case');
 var flatnest = require('flatnest');
+var names = require('people-names');
 var Fullcontact = require('fullcontact');
 
 
@@ -58,18 +59,11 @@ function middleware (apiKey) {
 }
 
 function validateName(data, person) {
-  // check to make sure fullcontact name isn't too different from existing
-  if (!person.name) return true;
-  var fcName = objCase(data, 'contactInfo.fullName');
-  if (!fcName) return false;
-  if (fcName.replace(/ /g, '').toUpperCase() === person.name.replace(/ /g, '').toUpperCase()) return true;
-  // names are different - need to parse
-  var pLastName = person.lastName.replace(/[ .]/g, '').toUpperCase();
-  var pFirstName = person.firstName.replace(/[ .]/g, '').toUpperCase();
-  var fcFirstName = (objCase(data, 'contactInfo.givenName') || '').replace(/[ .]/g, '').toUpperCase();
-  var fcLastName = (objCase(data, 'contactInfo.familyName') || '').replace(/[ .]/g, '').toUpperCase();
-  if (pLastName.length < 2 && pFirstName === fcFirstName && fcLastName[0] === pLastName[0]) return true;
-  return false;
+  return names.looseCompare(person, {
+    name: objCase(data, 'contactInfo.fullName'),
+    firstName: objCase(data, 'contactInfo.givenName'),
+    lastName: objCase(data, 'contactInfo.familyName')
+  });
 }
 
 /**

@@ -15,6 +15,7 @@
     "extend": "~1.2.1",
     "obj-case": "git://github.com/tedjt/obj-case",
     "flatnest": "git://github.com/tedjt/node-flatnest",
+    "people-names": "git://github.com/tedjt/people-names",
     "fullcontact": "0.0.2"
   },
   "devDependencies": {
