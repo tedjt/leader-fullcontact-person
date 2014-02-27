@@ -16,6 +16,10 @@ module.exports = function (apiKey) {
   return { fn: middleware(apiKey), wait: wait};
 };
 
+module.exports.test = {
+  validateName: validateName
+};
+
 /**
  * Create a Fullcontact name API leader plugin.
  *
@@ -30,7 +34,9 @@ function middleware (apiKey) {
     var fcCallback = function(err, data) {
       if (err) return next();
       extend(true, context, {fullcontact: {person: data}});
-      details(data, person);
+      if (validateName(data, person)) {
+        details(data, person);
+      }
       next();
     };
     if (person.email) {
@@ -49,6 +55,21 @@ function middleware (apiKey) {
       return next();
     }
   };
+}
+
+function validateName(data, person) {
+  // check to make sure fullcontact name isn't too different from existing
+  if (!person.name) return true;
+  var fcName = objCase(data, 'contactInfo.fullName');
+  if (!fcName) return false;
+  if (fcName.replace(/ /g, '').toUpperCase() === person.name.replace(/ /g, '').toUpperCase()) return true;
+  // names are different - need to parse
+  var pLastName = person.lastName.replace(/[ .]/g, '').toUpperCase();
+  var pFirstName = person.firstName.replace(/[ .]/g, '').toUpperCase();
+  var fcFirstName = (objCase(data, 'contactInfo.givenName') || '').replace(/[ .]/g, '').toUpperCase();
+  var fcLastName = (objCase(data, 'contactInfo.familyName') || '').replace(/[ .]/g, '').toUpperCase();
+  if (pLastName.length < 2 && pFirstName === fcFirstName && fcLastName[0] === pLastName[0]) return true;
+  return false;
 }
 
 /**

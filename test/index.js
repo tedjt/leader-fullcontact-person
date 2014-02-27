@@ -7,6 +7,39 @@ describe('leader-fullcontact-name', function () {
 
   var fullcontactPerson = plugin('997a4791ff2b8690');
 
+  it.only('should validate name', function () {
+    var fcData = {
+      contactInfo: {
+        fullName: 'Paul Gullas',
+        givenName: 'Paul',
+        familyName: 'Gullas'
+      }
+    };
+    var person = {
+      name: 'Paul Graham',
+      firstName: 'Paul',
+      lastName: 'Graham'
+    };
+    assert(!plugin.test.validateName(fcData, person));
+
+    person.lastName = 'G. ';
+    assert(plugin.test.validateName(fcData, person));
+
+    fcData = {
+      contactInfo: {
+        fullName: 'Ted Jacob Tomlinson',
+        givenName: 'Ted',
+        familyName: 'Tomlinson'
+      }
+    };
+    person = {
+      name: 'Ted T.',
+      firstName: 'Ted',
+      lastName: 'T.  '
+    };
+    assert(plugin.test.validateName(fcData, person));
+  });
+
   it('should wait if theres no email', function () {
     var context = {}, person = {};
     assert(!fullcontactPerson.wait(person, context));
