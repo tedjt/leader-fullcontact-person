@@ -80,6 +80,7 @@ function details (data, person) {
     'firstName': 'contactInfo.givenName',
     'lastName': 'contactInfo.familyName',
     'websites': 'websites',
+    'location': 'demographics.locationGeneral',
     'demographics': 'demographics'
   }));
   // social
