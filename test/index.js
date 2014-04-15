@@ -5,7 +5,7 @@ var plugin = require('..');
 
 describe('leader-fullcontact-name', function () {
 
-  var fullcontactPerson = plugin('xxxx');
+  var fullcontactPerson = plugin('xxx');
 
   it('should validate name', function () {
     var fcData = {
@@ -65,7 +65,20 @@ describe('leader-fullcontact-name', function () {
     });
   });
 
-  it('should be able to resolve a valid fullcontact person for paul Graham', function (done) {
+
+  it('should be able to resolve a valid fullcontact person for twitterj', function (done) {
+    var person = { twitter: {username : 'nostalgicchile' }};
+    var context = {};
+    fullcontactPerson.fn(person, context, function (err) {
+      if (err) return done(err);
+      console.log(person);
+      assert(person);
+      person.location.should.equal('SANTIAGO, CHILE');
+      done();
+    });
+  });
+
+  it.skip('should be able to resolve a valid fullcontact person for paul Graham', function (done) {
     var person = { email: 'pg@ycombinator.com' };
     var context = {};
     fullcontactPerson.fn(person, context, function (err) {
