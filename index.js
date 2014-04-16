@@ -63,6 +63,7 @@ function middleware (options) {
     }
     lastRequestTime = now;
     var fullcontact = fullcontactClients[i % fullcontactClients.length];
+    i++;
     var fcCallback = function(err, data) {
       console.log(err);
       console.log(data);
