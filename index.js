@@ -2,6 +2,7 @@ var debug = require('debug')('leader:fullcontact:name');
 var extend = require('extend');
 var objCase = require('obj-case');
 var flatnest = require('flatnest');
+var defaults = require('defaults');
 var names = require('people-names');
 var Fullcontact = require('fullcontact');
 
@@ -13,8 +14,8 @@ var Fullcontact = require('fullcontact');
  * @returns {Object}
  */
 
-module.exports = function (apiKey) {
-  return { fn: middleware(apiKey), wait: wait};
+module.exports = function (options) {
+  return { fn: middleware(options), wait: wait};
 };
 
 module.exports.test = {
@@ -28,11 +29,43 @@ module.exports.test = {
  * @return {Function}
  */
 
-function middleware (apiKey) {
-  var fullcontact = new Fullcontact(apiKey);
+function middleware (options) {
+  if (typeof options == 'string') {
+    options = {apiKey: options};
+  }
+  options = defaults(options || {}, {
+    // default rate limit of once per second
+    rateLimit: 1000
+  });
+  var fullcontactClients;
+  if (typeof options.apiKey === 'string') {
+    fullcontactClients = [new Fullcontact(options.apiKey)];
+  } else {
+    // assume its an array
+    fullcontactClients = options.apiKey.map(function(k) {
+      return new Fullcontact(k);
+    });
+  }
+  var i = 0;
+  var lastRequestTime = 0;
   return function fullcontactPersonApi (person, context, next) {
-    // search for both email and username. go with higher probablity
+    // rate limit
+    var now = Date.now();
+    if (options.rateLimit) {
+      var wait = options.rateLimit - now + lastRequestTime;
+      if (wait > 0) {
+        // set a timeout
+        debug('Fullconcact person waiting for %d milliseconds', wait);
+        return setTimeout(function() {
+          fullcontactPersonApi(person, context, next);
+        }, wait);
+      }
+    }
+    lastRequestTime = now;
+    var fullcontact = fullcontactClients[i % fullcontactClients.length];
     var fcCallback = function(err, data) {
+      console.log(err);
+      console.log(data);
       if (err) return next();
       extend(true, context, {fullcontact: {person: data}});
       if (validateName(data, person)) {
@@ -40,6 +73,7 @@ function middleware (apiKey) {
       }
       next();
     };
+    // search for both email and username. go with higher probablity
     if (person.email) {
       debug('querying fullcontact with email %s ..', person.email);
       fullcontact.person.email(person.email, fcCallback);

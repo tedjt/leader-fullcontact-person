@@ -4,8 +4,9 @@ var should = require('should');
 var plugin = require('..');
 
 describe('leader-fullcontact-name', function () {
+  this.timeout(10000);
 
-  var fullcontactPerson = plugin('xxx');
+  var fullcontactPerson = plugin({apiKey: 'xxx'});
 
   it('should validate name', function () {
     var fcData = {
@@ -66,7 +67,7 @@ describe('leader-fullcontact-name', function () {
   });
 
 
-  it('should be able to resolve a valid fullcontact person for twitterj', function (done) {
+  it('should be able to resolve a valid fullcontact person for twitter', function (done) {
     var person = { twitter: {username : 'nostalgicchile' }};
     var context = {};
     fullcontactPerson.fn(person, context, function (err) {
@@ -78,7 +79,7 @@ describe('leader-fullcontact-name', function () {
     });
   });
 
-  it.skip('should be able to resolve a valid fullcontact person for paul Graham', function (done) {
+  it('should be able to resolve a valid fullcontact person for paul Graham', function (done) {
     var person = { email: 'pg@ycombinator.com' };
     var context = {};
     fullcontactPerson.fn(person, context, function (err) {
